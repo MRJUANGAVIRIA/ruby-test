@@ -3,21 +3,20 @@ require_relative './item'
 
 receipt = Receipt.new
 
-puts 'Enter the number different type of items you want to purchase:'
-number_of_items = gets.chomp.to_i
+puts "Please, write  'calculate' to finish the purchase"
 
-number_of_items.times do
-  puts "Enter the amount of the item:"
-  amount = gets.chomp.to_i
-  puts "Enter the name of the item:"
-  name = gets.chomp
-  puts "Enter the price of the item:"
-  price = gets.chomp.to_f
+while true do
+  puts 'Enter new product:'
+  item_string = gets.chomp
+  break if item_string == 'calculate'
+
+  amount, price = item_string.scan(/[£$]\d+,\d+\.\d+|\d+\.\d+|\d+/)
+  name =  item_string.gsub('at ', '').gsub('.', '').gsub( /\d+/,'').strip
   imported = name.downcase.include?('imported')
   tax_rate = imported ? 0.15 : 0.1
   dictionary_exceptions = ['book', 'food', 'medical', 'chocolate', 'chocolates', 'headache', 'pills']
   tax_rate -= 0.1 if dictionary_exceptions.map{ |o| name =~ /\b#{Regexp.escape(o)}\b/ }.any?
-  item = Item.new(name, price, tax_rate, imported, amount)
+  item = Item.new(name, price.to_f, tax_rate, imported, amount.to_i)
   receipt.add_item(item)
 end
 
